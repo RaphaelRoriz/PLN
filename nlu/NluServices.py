@@ -11,6 +11,7 @@ from nltk.tokenize.toktok import ToktokTokenizer
 import re
 from contractions import CONTRACTION_MAP
 import unicodedata
+import json
 
 
 nlp = spacy.load('pt', parse=True, tag=True, entity=True)
@@ -69,58 +70,57 @@ def remove_stopwords(text, is_lower_case=False):
 
 def normalize_corpus(corpus,contraction_expansion = True,accented_char_removal=True,text_lower_case = True,text_lemmatization=True,special_char_removal=True,stopwords_removal=True,remove_digits=True):
 
-  normalized_corpus = []
+  normalized_corpus = corpus
   #normalize each document in the corpus
-  for doc in corpus:
-    
-    
-    #remove accented chars
-    if accented_char_removal:
-      doc = remove_accented_chars(doc)
 
-    #expand contractions
-    if contraction_expansion:
-      doc = expand_contractions(doc)
+  #remove accented chars
+  if accented_char_removal:
+    normalized_corpus = remove_accented_chars(normalized_corpus)
 
-    #lowercase text
-    if text_lower_case:
-      doc = doc.lower()
+  #expand contractions
+  if contraction_expansion:
+    normalized_corpus = expand_contractions(normalized_corpus)
 
-    #remove extra newlines
-    doc = re.sub(r'[\r|\n|\r|\n]+',' ',doc)
+  #lowercase text
+  if text_lower_case:
+    normalized_corpus = normalized_corpus.lower()
 
-    #lemmatize text
-    if text_lemmatization:
-      doc = lemmatize_text(doc)
+  #remove extra newlines
+  normalized_corpus = re.sub(r'[\r|\n|\r|\n]+',' ',normalized_corpus)
 
-    #remove special characters and/or digits
-    if special_char_removal:
-      #insert spaces between special chars to isolate them
-      special_char_pattern = re.compile(r'([{.(-)!}])')
-      doc = special_char_pattern.sub("\\1",doc)
-      doc = remove_special_characters(doc,remove_digits=remove_digits)
+  #lemmatize text
+  if text_lemmatization:
+    normalized_corpus = lemmatize_text(normalized_corpus)
 
-    #remove extra whitespace
-    doc = re.sub(' +',' ',doc)
+  #remove special characters and/or digits
+  if special_char_removal:
+    #insert spaces between special chars to isolate them
+    special_char_pattern = re.compile(r'([{.(-)!}])')
+    normalized_corpus = special_char_pattern.sub("\\1",normalized_corpus)
+    normalized_corpus = remove_special_characters(normalized_corpus,remove_digits=remove_digits)
 
-    #remove stopwords
-    if stopwords_removal:
-      doc = remove_stopwords(doc,is_lower_case=text_lower_case)
+  #remove extra whitespace
+  normalized_corpus = re.sub(' +',' ',normalized_corpus)
 
-    normalized_corpus.append(doc)
+  #remove stopwords
+  if stopwords_removal:
+    normalized_corpus = remove_stopwords(normalized_corpus,is_lower_case=text_lower_case)
+
+  
 
   return normalized_corpus
 
 
 
-text = "este Texto aqui é um exemplo para ser utilizado, durante o projeto ! nao é suposto que ele faça algum sentido"
+text = "este Texto aqui é um exemplo para ser@#  utilizado, durante o projeto ! nao é suposto que ele faça algum sentido"
 # pre-process text and store the same
 corpus = normalize_corpus(text , text_lower_case=False, 
-                          text_lemmatization=False, special_char_removal=False)
+                          text_lemmatization=False, special_char_removal=True)
+#print("a")
+#print(corpus)
+#print("b")
 
-# demo for POS tagging for sample news headline
-
-sentence_nlp = nlp(text)
+sentence_nlp = nlp(corpus)
 
 # POS tagging with Spacy 
 spacy_pos_tagged = [(word, word.pos_) for word in sentence_nlp]
@@ -134,7 +134,7 @@ spacySynthaticDF = pd.DataFrame(spacy_synthatic_parsed, columns=['Word','Tag'])
 # POS tagging with nltk , by now im just using spacy 
 #nltk_pos_tagged = nltk.pos_tag(text.split())
 #nltkDF = pd.DataFrame(nltk_pos_tagged, columns=['Word', 'POS tag'])
-
+print(text)
 print('Spacy POS: ')
 print(spacyPosDF.to_string())
 print('Spacy synthatic: ')
