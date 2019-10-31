@@ -155,4 +155,3 @@ with open('nlu.json','w',encoding='utf-8') as outfile:
 #print(spacyPosDF.to_string())
 #print('Spacy synthatic: ')
 #print(spacySynthaticDF.to_string())
-
