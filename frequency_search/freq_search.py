@@ -50,6 +50,8 @@ class FrequencySearcher:
 
 		for text in self.corpus:
 			text['processed_text'] = self.process_text(text['raw_text']) 
+			text['tokens'] = self.tokenize(text['processed_text'])
+
 
 		print(self.corpus)
 			
@@ -66,6 +68,9 @@ class FrequencySearcher:
 		processed_text = " ".join(processed_text.split())
 
 		return processed_text
+
+	def tokenize(self,processed_text):
+		return processed_text.split()
 
 
 
@@ -91,4 +96,4 @@ if __name__ == "__main__":
 
 #fontes para o desenvolvimento do trabalho:
 #   https://www.geeksforgeeks.org/how-to-read-multiple-text-files-from-folder-in-python/
-#   
+#   https://pt.stackoverflow.com/questions/124088/remover-pontua%C3%A7%C3%A3o-e-s%C3%ADmbolos-em-python 
