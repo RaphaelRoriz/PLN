@@ -1,5 +1,7 @@
 import sys
 import os
+import re
+import string
 
 class FrequencySearcher:
 
@@ -8,14 +10,17 @@ class FrequencySearcher:
 		self.texts_path = directory_path
 		self.search_string = search_string
 
-		self.corpus = {}
-		self.corpus['raw_texts'] = []
-		
-	def read_text(self,file_path):
-		with open(file_path, 'r') as f:
-			# print(f.read())
-			self.corpus['raw_texts'].append(f.read())
+		self.corpus = []
+		# self.corpus['raw_texts'] = []
+		# self.corpus['processed_texts'] = []
+		# self.corpus['overlap_values'] = []
 	
+	def get_corpus(self):
+
+		self.read_texts()
+
+		self.process_corpus()
+
 	def read_texts(self):
 
 		os.chdir(self.texts_path)
@@ -30,30 +35,43 @@ class FrequencySearcher:
 				# file_path = f"{self.texts_path}/{file}"
 				self.read_text(file)
 
-		print("corpus")
-		for text in self.corpus['raw_texts']:
-			print('texto')
-			print(text)
+		# print("corpus")
+		# for text in self.corpus:
+		# 	print('texto')
+		# 	print(text)
+
+	def read_text(self,file_path):
+		with open(file_path, 'r') as f:
+			text = {}
+			text['raw_text'] = f.read()
+			self.corpus.append(text)
+
+	def process_corpus(self):
+
+		for text in self.corpus:
+			text['processed_text'] = self.process_text(text['raw_text']) 
+
+		print(self.corpus)
+			
+
+	def process_text(self, raw_text):
+
+		#convert letters to lowercase
+		raw_text = raw_text.lower()
+
+		#remove punctuation
+		processed_text = re.sub(r'[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ ]', '', raw_text)
+
+		#remove unwanted white spaces
+		processed_text = " ".join(processed_text.split())
+
+		return processed_text
+
+
 
 
 	# def preProcessing(self):
 		
-	# def log(self):
-
-	# 	numPacotesRecebidos = len(self.rttsIndividuais)
-		
-	# 	if (numPacotesRecebidos != 0):
-	# 		rttMedio = sum(self.rttsIndividuais) / numPacotesRecebidos 
-	# 		taxaPerdaDePacotes = (1 - (numPacotesRecebidos / float(self.numPacotes))) * 100
-	# 	else:
-	# 		rttMedio = "indefinido"
-	# 		taxaPerdaDePacotes = 100
-	# 		print "Todos os pacotes foram perdidos!"
-
-	# 	print "\nLOG"
-	# 	print "--RTT medio:", rttMedio 
-	# 	print"--Taxa de perda de pacotes:", taxaPerdaDePacotes, "%"  
-
 
 if __name__ == "__main__":
 
@@ -64,7 +82,8 @@ if __name__ == "__main__":
 	# print(search_string)
 
 	freq_searcher = FrequencySearcher(directory_path,search_string)
-	freq_searcher.read_texts()
+	freq_searcher.get_corpus()
+	
 
 	# frequency_searcher = FrequencySearcher()
 
