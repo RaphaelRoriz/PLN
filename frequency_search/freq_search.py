@@ -48,7 +48,8 @@ class FrequencySearcher:
 			text['processed_text'] = self.process_text(text['raw_text']) 
 			text['tokens'] = self.tokenize(text['processed_text'])
 			text['overlap_score'] = self.overlap(self.search_string['tokens'],text['tokens'])
-			print(text)
+
+		self.get_higher_overlap(self.corpus)
 
 	def process_text(self, raw_text):
 
@@ -70,9 +71,6 @@ class FrequencySearcher:
 
 		total = 0
 
-		print(search_string_tokens)
-		print(text_tokens)
-
 		for search_string_token in search_string_tokens:
 			
 			for text_token in text_tokens:
@@ -82,13 +80,23 @@ class FrequencySearcher:
 				# print(text_token)
 
 				if search_string_token == text_token:
-					print("igual")
 					total += 1
 
 		longer_list_size = len(search_string_token) if len(search_string_tokens) > len(text_tokens) else len(text_tokens)
 
 		return total / longer_list_size
 
+	def get_higher_overlap(self,corpus):
+		higher_overlap = {}
+		higher_overlap['overlap_score'] = 0
+		higher_overlap['text'] = []
+
+		for text in corpus:
+			if text['overlap_score'] > higher_overlap['overlap_score']:
+				higher_overlap['overlap_score'] = text['overlap_score']
+				higher_overlap['text'] = text['raw_text']
+
+		print(higher_overlap['text'])
 		
 
 if __name__ == "__main__":
