@@ -8,12 +8,13 @@ class FrequencySearcher:
 	def __init__(self, directory_path, search_string):
 
 		self.texts_path = directory_path
-		self.search_string = search_string
+		self.search_string = {}
+		self.search_string['raw'] =  search_string
+		self.search_string['processed'] = self.process_text(self.search_string['raw'])
+		self.search_string['tokens'] = self.tokenize(self.search_string['processed'])
 
 		self.corpus = []
-		# self.corpus['raw_texts'] = []
-		# self.corpus['processed_texts'] = []
-		# self.corpus['overlap_values'] = []
+		
 	
 	def get_corpus(self):
 
@@ -25,14 +26,9 @@ class FrequencySearcher:
 
 		os.chdir(self.texts_path)
 
-		print(self.texts_path)
-		print(self.search_string)
-		print("oh droga")
-
 		for file in os.listdir():
-			print(file)
+			
 			if file.endswith(".txt"):
-				# file_path = f"{self.texts_path}/{file}"
 				self.read_text(file)
 
 		# print("corpus")
@@ -51,10 +47,8 @@ class FrequencySearcher:
 		for text in self.corpus:
 			text['processed_text'] = self.process_text(text['raw_text']) 
 			text['tokens'] = self.tokenize(text['processed_text'])
-
-
-		print(self.corpus)
-			
+			text['overlap_score'] = self.overlap(self.search_string['tokens'],text['tokens'])
+			print(text)
 
 	def process_text(self, raw_text):
 
@@ -72,10 +66,29 @@ class FrequencySearcher:
 	def tokenize(self,processed_text):
 		return processed_text.split()
 
+	def overlap(self,search_string_tokens,text_tokens):
 
+		total = 0
 
+		print(search_string_tokens)
+		print(text_tokens)
 
-	# def preProcessing(self):
+		for search_string_token in search_string_tokens:
+			
+			for text_token in text_tokens:
+				# print("search_string_token")
+				# print(search_string_token)
+				# print("text_token")
+				# print(text_token)
+
+				if search_string_token == text_token:
+					print("igual")
+					total += 1
+
+		longer_list_size = len(search_string_token) if len(search_string_tokens) > len(text_tokens) else len(text_tokens)
+
+		return total / longer_list_size
+
 		
 
 if __name__ == "__main__":
