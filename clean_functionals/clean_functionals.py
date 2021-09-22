@@ -19,6 +19,9 @@ class FunctionalsCleaner:
 	def get_corpus(self):
 
 		self.read_text(self.text_path)
+		self.process_corpus()
+
+		print(self.corpus)
 
 		#self.process_corpus()
 
@@ -32,13 +35,21 @@ class FunctionalsCleaner:
 				self.corpus['raw_text'] = f.read().splitlines()
 				self.corpus['raw_text'] = "".join(self.corpus['raw_text']) 
 
-			print(self.corpus)
 
 		except IOError:
 
 			print("Arquivo não existe!")
 
-		
+	def process_corpus(self):
+
+		#remove punctuation
+		self.corpus['processed_text'] = re.sub(r'[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ ]', ' ', self.corpus['raw_text'])
+
+		#remove unwanted white spaces
+		self.corpus['processed_text'] = " ".join(self.corpus['processed_text'].split())
+
+
+
 
 	
 		
