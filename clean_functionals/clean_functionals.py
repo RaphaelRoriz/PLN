@@ -3,8 +3,6 @@ import os
 import re
 import spacy
 
-
-
 class FunctionalsCleaner:
 
 	def __init__(self, text_path):
@@ -27,7 +25,6 @@ class FunctionalsCleaner:
 
 		#print(self.corpus)
 
-
 	def read_text(self,file_path):
 
 		try:
@@ -36,7 +33,6 @@ class FunctionalsCleaner:
 				
 				self.corpus['raw_text'] = f.read().splitlines()
 				self.corpus['raw_text'] = " ".join(self.corpus['raw_text']) 
-
 
 		except IOError:
 
@@ -57,7 +53,7 @@ class FunctionalsCleaner:
 		cleaned_tokens = []
 
 		for token in doc:
-			print(token.text, token.pos_)
+			
 			if( not token.pos_ in self.functional_words):
 				cleaned_tokens.append(token.text)
 
@@ -76,7 +72,7 @@ class FunctionalsCleaner:
 
 		return cleaned_text
 
-		
+
 if __name__ == "__main__":
 
 	text_path = sys.argv[1]
