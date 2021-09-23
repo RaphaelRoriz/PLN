@@ -17,15 +17,13 @@ class FunctionalsCleaner:
 
 		self.get_corpus()
 
-		self.functional_words = ['PUNCT','SYMBOL','DET','ADP','INTJ','PRON','CONJ']
-
-		#artigos, preposições, conjunções, interjeições e pronomes, assim como as pontuações
+		self.functional_words = ['PUNCT','SYMBOL','DET','ADP','INTJ','PRON','CONJ','CCONJ','SCONJ','AUX']
 	
 	
 	def get_corpus(self):
 
 		self.read_text(self.text_path)
-		self.process_corpus()
+		#self.process_corpus()
 
 		#print(self.corpus)
 
@@ -37,60 +35,47 @@ class FunctionalsCleaner:
 			with open(file_path, 'r') as f:
 				
 				self.corpus['raw_text'] = f.read().splitlines()
-				self.corpus['raw_text'] = "".join(self.corpus['raw_text']) 
+				self.corpus['raw_text'] = " ".join(self.corpus['raw_text']) 
 
 
 		except IOError:
 
 			print("Arquivo não existe!")
 
-	def process_corpus(self):
-
-		#remove punctuation
-		self.corpus['processed_text'] = re.sub(r'[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ ]', ' ', self.corpus['raw_text'])
-
-		#remove unwanted white spaces
-		self.corpus['processed_text'] = " ".join(self.corpus['processed_text'].split())
-
-		#tokenize corpus
-		self.corpus['tokens'] = self.tokenize(self.corpus['processed_text'])
-
-	def tokenize(self,processed_text):
-		
-		return processed_text.split()
-
 	def clean_functionals(self):
 
-		# stopwords = sp.Defaults.stop_words
+		doc = self.sp(self.corpus['raw_text'])
 
-		# tokens_without_stopwords = [word for word in self.corpus['tokens'] if not word in stopwords]
+		cleaned_tokens = self.get_cleaned_tokens(doc)
 
-		# aux = " ".join(tokens_without_stopwords)
+		cleaned_text = self.get_cleaned_text(cleaned_tokens)
 
-		# #print(self.corpus['tokens'])
-		# print(self.sp(self.corpus['raw_text']))
+		print(cleaned_text)
 
-		doc = self.sp(self.corpus['processed_text'])
+	def get_cleaned_tokens(self,doc):
 
 		cleaned_tokens = []
 
 		for token in doc:
+			print(token.text, token.pos_)
 			if( not token.pos_ in self.functional_words):
 				cleaned_tokens.append(token.text)
 
-		print(" ".join(cleaned_tokens))
+		return cleaned_tokens
 
+	def get_cleaned_text(self,cleaned_tokens):
 
+		#build the text from the tokens
+		cleaned_text = " ".join(cleaned_tokens)
 
+		#remove quotes
+		cleaned_text = cleaned_text.replace('"',"")
 
-		
+		#remove unwanted white spaces
+		cleaned_text = " ".join(cleaned_text.split())
 
+		return cleaned_text
 
-
-
-
-
-	
 		
 if __name__ == "__main__":
 
@@ -100,6 +85,7 @@ if __name__ == "__main__":
 	cleaner.clean_functionals()
 	
 
-
 #fontes para o desenvolvimento do trabalho:
 #   https://spacy.io/usage/linguistic-features
+#   https://machinelearningknowledge.ai/tutorial-on-spacy-part-of-speech-pos-tagging/#Why_POS_tag_is_used
+#   https://medium.com/@dehhmesquita/natural-language-processing-com-a-biblioteca-spacy-f324a9eeb8dc
