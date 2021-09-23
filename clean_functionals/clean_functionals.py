@@ -17,14 +17,10 @@ class FunctionalsCleaner:
 
 		self.functional_words = ['PUNCT','SYMBOL','DET','ADP','INTJ','PRON','CONJ','CCONJ','SCONJ','AUX']
 	
-	
 	def get_corpus(self):
 
 		self.read_text(self.text_path)
-		#self.process_corpus()
-
-		#print(self.corpus)
-
+		
 	def read_text(self,file_path):
 
 		try:
